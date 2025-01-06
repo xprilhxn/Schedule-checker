@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengecekan Jadwal Kerja</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-image: url(images/bg.png); /* URL gambar latar belakang */
+    background-size: cover; /* Memastikan gambar mengisi seluruh layar */
+    background-repeat: no-repeat; /* Tidak mengulang gambar */
+    background-position: center; /* Gambar diposisikan di tengah */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+        .container {
+            text-align: center;
+            background-color: black;
+            background-color: rgba(0, 0, 0, 0.6); /* Transparansi pada container */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            opacity: 0,5;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        select, button, input {
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        input[type="date"] {
+            font-size: 16px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        #schedule {
+            font-weight: bold;
+        }
+
+        #message {
+            margin-top: 20px;
+        }
+
+        .overtime {
+            color: red;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+        }
+        .logo {
+    max-width: 100%; /* Pastikan logo tidak melebihi lebar container */
+    height: auto;    /* Menjaga aspek rasio logo */
+    display: block;  /* Memastikan elemen logo sebagai block */
+    margin: 0 auto 10px; /* Memposisikan logo di tengah dan memberikan jarak bawah */
+}
+select, input[type="date"] {
+    margin: 10px 0;
+    padding: 8px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center; /* Memusatkan teks untuk input */
+    text-align-last: center; /* Memusatkan teks dalam dropdown (untuk select) */
+    appearance: none; /* Menghapus gaya bawaan browser pada select */
+}
+
+input[type="date"] {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+    <img src="images/logo.png" alt="Logo Perusahaan" class="logo">
+    <hr> <!-- Garis Pemisah -->
+    <h1>CEK JADWAL KERJA (UNOFFICIAL)</h1>
+        
+        <!-- Grup Pemilihan -->
+        <div class="form-group">
+            <label for="group">Pilih Grup :</label>
+            <select id="group" name="group">
+                <option value="A">Grup A</option>
+                <option value="B">Grup B</option>
+                <option value="C">Grup C</option>
+            </select>
+        </div>
+        
+        <hr> <!-- Garis Pemisah -->
+
+        <!-- Tanggal Pemilihan -->
+        <div class="form-group">
+    <label for="date">Pilih Tanggal :</label>
+    <input type="date" id="date" name="date" min="2025-01-01" max="2025-12-31" value="2025-01-05">
+</div>
+
+        <hr> <!-- Garis Pemisah -->
+
+        <!-- Tombol untuk memeriksa jadwal -->
+        <button onclick="checkSchedule()">Cek Jadwal</button>
+
+        <!-- Pesan dan Hasil Jadwal -->
+        <p id="message"></p>
+        <p id="schedule"></p>
+        <p id="holiday"></p>
+        
+        <!-- Copyright -->
+        <footer>
+            &copy; 2025 Aprilhxn Made With 🤍
+        </footer>
+    </div>
+
+    <script>
+        // Daftar hari libur nasional 2025
+        const nationalHolidays = {
+            '2025-01-01': 'Tahun Baru Masehi',
+            '2025-01-27': 'Isra Mikraj Nabi Muhammad SAW',
+            '2025-01-29': 'Hari Raya Imlek 2576',
+            '2025-03-29': 'Hari Raya Nyepi',
+            '2025-03-31': 'Hari Raya Idul Fitri 1446H',
+            '2025-04-01': 'Hari Raya Idul Fitri 1446H',
+            '2025-04-18': 'Jumat Agung',
+            '2025-04-20': 'Paskah',
+            '2025-05-01': 'Hari Buruh',
+            '2025-05-12': 'Hari Raya Waisak',
+            '2025-05-29': 'Kenaikan Yesus Kristus',
+            '2025-06-01': 'Hari Lahir Pancasila',
+            '2025-06-06': ' Hari Raya Idul Adha',
+            '2025-06-27': 'Tahun Baru Islam 1447H',
+            '2025-08-17': 'Hari Kemerdekaan Republik Indonesia',
+            '2025-09-05': 'Maulid Nabi Muhammad SAW',
+            '2025-12-25': 'Hari Natal',
+        };
+
+        // Fungsi untuk mendapatkan nama hari dalam format Indonesia
+        function getDayName(date) {
+            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            return days[date.getDay()];
+        }
+
+        // Fungsi untuk mengecek jadwal berdasarkan grup yang dipilih
+        function checkSchedule() {
+            // Mengambil nilai input dari user
+            const dateInput = document.getElementById('date').value;
+            const group = document.getElementById('group').value;
+            
+            // Mengecek apakah input tanggal valid
+            if (!dateInput) {
+                document.getElementById('message').innerText = "Silakan pilih tanggal terlebih dahulu.";
+                document.getElementById('schedule').style.display = "none"; // Menyembunyikan jadwal
+                document.getElementById('holiday').style.display = "none"; // Menyembunyikan libur
+                return;
+            }
+
+            // Membuat objek tanggal berdasarkan input user
+            const inputDate = new Date(dateInput);
+            const inputDateString = inputDate.toISOString().split('T')[0]; // Mendapatkan tanggal dalam format YYYY-MM-DD
+            
+            // Mendapatkan nama hari, tanggal, bulan dan tahun dalam format yang diinginkan
+            const dayName = getDayName(inputDate);
+            const day = inputDate.getDate().toString().padStart(2, '0');
+            const month = (inputDate.getMonth() + 1).toString().padStart(2, '0'); // Bulan dimulai dari 0
+            const year = inputDate.getFullYear();
+            const formattedDate = `${dayName}, ${day}-${month}-${year}`;
+
+            // Mengecek apakah tanggal yang dipilih bertepatan dengan hari libur nasional
+            const holidayName = nationalHolidays[inputDateString];
+            const isHoliday = holidayName !== undefined;
+
+            // Menentukan hari pertama jadwal (5 Januari 2025)
+            const startDate = new Date(2025, 0, 5); // 5 Januari 2025 adalah hari pertama
+            
+            // Menghitung selisih hari antara tanggal mulai dan tanggal yang dimasukkan
+            const diffTime = inputDate - startDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Menghitung selisih dalam hari
+
+            // Modulo 6 untuk mendapatkan pola jadwal (6 hari siklus)
+            const scheduleIndex = diffDays % 6;  // Menggunakan modulus 6 untuk menentukan siklus (pola 6 hari)
+
+            let scheduleText = '';
+
+            // Menentukan jadwal berdasarkan pola dan grup yang dipilih
+            switch (scheduleIndex) {
+                case 0:
+                    // Grup A : Libur, Grup B : Shift Pagi, Grup C: Shift Malam
+                    if (group === 'A') {
+                        scheduleText = "LIBUR : HARI KE 1";
+                    } else if (group === 'B') {
+                        scheduleText = "SHIFT PAGI : HARI KE 1";
+                    } else if (group === 'C') {
+                        scheduleText = "SHIFT MALAM : HARI KE 1";
+                    }
+                    break;
+                case 1:
+                    // Grup A : Libur, Grup B : Shift Pagi, Grup C : Shift Malam
+                    if (group === 'A') {
+                        scheduleText = "LIBUR : HARI KE 2";
+                    } else if (group === 'B') {
+                        scheduleText = "SHIFT PAGI : HARI KE 2";
+                    } else if (group === 'C') {
+                        scheduleText = "SHIFT MALAM : HARI KE 2";
+                    }
+                    break;
+                case 2:
+                    // Grup A : Shift Pagi, Grup B : Shift Malam, Grup C : Libur
+                    if (group === 'A') {
+                        scheduleText = "SHIFT PAGI : HARI KE 1";
+                    } else if (group === 'B') {
+                        scheduleText = "SHIFT MALAM : HARI KE 1";
+                    } else if (group === 'C') {
+                        scheduleText = "LIBUR : HARI KE 1";
+                    }
+                    break;
+                case 3:
+                    // Grup A : Shift Pagi, Grup B : Shift Malam, Grup C : Libur
+                    if (group === 'A') {
+                        scheduleText = "SHIFT PAGI : HARI KE 2";
+                    } else if (group === 'B') {
+                        scheduleText = "SHIFT MALAM : HARI KE 2";
+                    } else if (group === 'C') {
+                        scheduleText = "LIBUR : HARI KE 2";
+                    }
+                    break;
+                case 4:
+                    // Grup A : Shift Malam, Grup B : Libur, Grup C: Shift Pagi
+                    if (group === 'A') {
+                        scheduleText = "SHIFT MALAM : HARI KE 1";
+                    } else if (group === 'B') {
+                        scheduleText = "LIBUR : HARI KE 1";
+                    } else if (group === 'C') {
+                        scheduleText = "SHIFT PAGI : HARI KE 1";
+                    }
+                    break;
+                case 5:
+                    // Grup A : Shift Malam, Grup B : Libur, Grup C : Shift Malam
+                    if (group === 'A') {
+                        scheduleText = "SHIFT MALAM : HARI KE 2";
+                    } else if (group === 'B') {
+                        scheduleText = "LIBUR : HARI KE 2";
+                    } else if (group === 'C') {
+                        scheduleText = "SHIFT PAGI : HARI KE 2";
+                    }
+                    break;
+            }
+
+            // Menampilkan pesan dengan format tanggal yang baru
+            document.getElementById('message').innerText = `Grup ${group} Pada ${formattedDate}:`;
+            document.getElementById('schedule').innerText = scheduleText;
+
+            // Menampilkan keterangan libur atau lembur
+            if (isHoliday) {
+                document.getElementById('holiday').innerHTML = `<span class="overtime">LEMBUR</span> - Tanggal Ini Adalah Hari Libur Nasional : ${holidayName}.`;
+            } else {
+                document.getElementById('holiday').innerText = '';
+            }
+        }
+    </script>
+</body>
+</html>
