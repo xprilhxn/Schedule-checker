@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Aprilhxn">
-    <title>Glazing Line Work Schedule Checker V1.0</title>
-    <!-- Primary Meta Tags -->
+    <title>Glazing Line Schedule Checker</title>
+     <!-- Primary Meta Tags -->
 <title>Glazing Line Work Schedule Checker V1.0</title>
 <meta name="title" content="Glazing Line Work Schedule Checker V1.0" />
 <meta name="description" content="[UNOFFICIAL] Work Schedule Checker For Employees of the GLAZING LINE Department" />
@@ -107,6 +110,37 @@
     display: block;  /* Memastikan elemen logo sebagai block */
     margin: 0 auto 10px; /* Memposisikan logo di tengah dan memberikan jarak bawah */
 }
+.instagram-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #E4405F; /* Warna khas Instagram */
+    color: white; /* Warna teks */
+    text-decoration: none; /* Hilangkan garis bawah */
+    padding: 10px 20px; /* Padding tombol */
+    border-radius: 5px; /* Sudut membulat */
+    font-size: 16px; /* Ukuran font */
+    font-weight: bold; /* Teks tebal */
+    margin: 20px auto; /* Jarak atas dan bawah, auto untuk tengah */
+    transition: background-color 0.3s ease; /* Efek transisi saat hover */
+    text-align: center;
+}
+
+.instagram-button i {
+    margin-right: 10px; /* Jarak antara ikon dan teks */
+    font-size: 20px; /* Ukuran ikon */
+}
+
+.instagram-button:hover {
+    background-color: #D62976; /* Warna lebih gelap saat hover */
+}
+
+/* Menempatkan tombol ke tengah */
+.instagram-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
 select, input[type="date"] {
     margin: 10px 0;
     padding: 8px;
@@ -129,7 +163,7 @@ input[type="date"] {
     <div class="container">
     <img src="images/logo.png" alt="Logo Perusahaan" class="logo">
     <hr> <!-- Garis Pemisah -->
-    <h1>CEK JADWAL KERJA (UNOFFICIAL)</h1>
+    <h1>WORK SCHEDULE CHECKER [UNOFFICIAL]</h1>
         
         <!-- Grup Pemilihan -->
         <div class="form-group">
@@ -158,6 +192,11 @@ input[type="date"] {
         <p id="message"></p>
         <p id="schedule"></p>
         <p id="holiday"></p>
+        <div class="instagram-container">
+    <a href="https://www.instagram.com/aprilhxn" target="_blank" class="instagram-button">
+        <i class="fab fa-instagram"></i>Follow Me On Instagram
+    </a>
+</div>
         
         <!-- Copyright -->
         <footer>
@@ -180,7 +219,7 @@ input[type="date"] {
             '2025-05-12': 'Hari Raya Waisak',
             '2025-05-29': 'Kenaikan Yesus Kristus',
             '2025-06-01': 'Hari Lahir Pancasila',
-            '2025-06-06': 'Hari Raya Idul Adha',
+            '2025-06-06': ' Hari Raya Idul Adha',
             '2025-06-27': 'Tahun Baru Islam 1447H',
             '2025-08-17': 'Hari Kemerdekaan Republik Indonesia',
             '2025-09-05': 'Maulid Nabi Muhammad SAW',
@@ -299,7 +338,7 @@ input[type="date"] {
             }
 
             // Menampilkan pesan dengan format tanggal yang baru
-            document.getElementById('message').innerText = `Grup ${group} Pada ${formattedDate}:`;
+            document.getElementById('message').innerText = `Grup ${group} Pada Hari ${formattedDate}:`;
             document.getElementById('schedule').innerText = scheduleText;
 
             // Menampilkan keterangan libur atau lembur
